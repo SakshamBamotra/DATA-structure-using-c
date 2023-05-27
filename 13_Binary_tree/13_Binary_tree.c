@@ -1,147 +1,135 @@
-//C program to Implement a Priority Queue using Linked List and develop functions to perform enqueue and dequeue operations.
-#include <stdio.h>
-#include <stdlib.h>
+//C Binary Tree with an Example C Code (Search, Delete, Insert Nodes)
+#include<stdlib.h>
+#include<stdio.h>
 
-#define MAX 5
+struct bin_tree {
+int data;
+struct bin_tree * right, * left;
+};
+typedef struct bin_tree node;
 
-void insert_by_priority(int);
-void delete_by_priority(int);
-void create();
-void check(int);
-void display_pqueue();
+void insert(node ** tree, int val)
+{
+    node *temp = NULL;
+    if(!(*tree))
+    {
+        temp = (node *)malloc(sizeof(node));
+        temp->left = temp->right = NULL;
+        temp->data = val;
+        *tree = temp;
+        return;
+    }
 
-int pri_que[MAX];
-int front, rear;
+    if(val < (*tree)->data)
+    {
+        insert(&(*tree)->left, val);
+    }
+    else if(val > (*tree)->data)
+    {
+        insert(&(*tree)->right, val);
+    }
+
+}
+
+void print_preorder(node * tree)
+{
+    if (tree)
+    {
+        printf("%d\n",tree->data);
+        print_preorder(tree->left);
+        print_preorder(tree->right);
+    }
+
+}
+
+void print_inorder(node * tree)
+{
+    if (tree)
+    {
+        print_inorder(tree->left);
+        printf("%d\n",tree->data);
+        print_inorder(tree->right);
+    }
+}
+
+void print_postorder(node * tree)
+{
+    if (tree)
+    {
+        print_postorder(tree->left);
+        print_postorder(tree->right);
+        printf("%d\n",tree->data);
+    }
+}
+
+void deltree(node * tree)
+{
+    if (tree)
+    {
+        deltree(tree->left);
+        deltree(tree->right);
+        free(tree);
+    }
+}
+
+node* search(node ** tree, int val)
+{
+    if(!(*tree))
+    {
+        return NULL;
+    }
+
+    if(val < (*tree)->data)
+    {
+        search(&((*tree)->left), val);
+    }
+    else if(val > (*tree)->data)
+    {
+        search(&((*tree)->right), val);
+    }
+    else if(val == (*tree)->data)
+    {
+        return *tree;
+    }
+}
 
 void main()
 {
-    int n, ch;
+    node *root;
+    node *tmp;
+    //int i;
 
-    printf("\n1 - Insert an element into queue");
-    printf("\n2 - Delete an element from queue");
-    printf("\n3 - Display queue elements");
-    printf("\n4 - Exit");
+    root = NULL;
+    /* Inserting nodes into tree */
+    insert(&root, 9);
+    insert(&root, 4);
+    insert(&root, 15);
+    insert(&root, 6);
+    insert(&root, 12);
+    insert(&root, 17);
+    insert(&root, 2);
 
-    create();
+    /* Printing nodes of tree */
+    printf("Pre Order Display\n");
+    print_preorder(root);
 
-    while (1)
+    printf("In Order Display\n");
+    print_inorder(root);
+
+    printf("Post Order Display\n");
+    print_postorder(root);
+
+    /* Search node into tree */
+    tmp = search(&root, 4);
+    if (tmp)
     {
-        printf("\nEnter your choice : ");
-        scanf("%d", &ch);
-
-        switch (ch)
-        {
-        case 1:
-            printf("\nEnter value to be inserted : ");
-            scanf("%d",&n);
-            insert_by_priority(n);
-            break;
-        case 2:
-            printf("\nEnter value to delete : ");
-            scanf("%d",&n);
-            delete_by_priority(n);
-            break;
-        case 3:
-            display_pqueue();
-            break;
-        case 4:
-            exit(0);
-        default:
-            printf("\nChoice is incorrect, Enter a correct choice");
-        }
-    }
-}
-
-/* Function to create an empty priority queue */
-void create()
-{
-    front = rear = -1;
-}
-
-/* Function to insert value into priority queue */
-void insert_by_priority(int data)
-{
-    if (rear >= MAX - 1)
-    {
-        printf("\nQueue overflow no more elements can be inserted");
-        return;
-    }
-    if ((front == -1) && (rear == -1))
-    {
-        front++;
-        rear++;
-        pri_que[rear] = data;
-        return;
+        printf("Searched node=%d\n", tmp->data);
     }
     else
-        check(data);
-    rear++;
-}
-
-/* Function to check priority and place element */
-void check(int data)
-{
-    int i,j;
-
-    for (i = 0; i <= rear; i++)
     {
-        if (data >= pri_que[i])
-        {
-            for (j = rear + 1; j > i; j--)
-            {
-                pri_que[j] = pri_que[j - 1];
-            }
-            pri_que[i] = data;
-            return;
-        }
-    }
-    pri_que[i] = data;
-}
-
-/* Function to delete an element from queue */
-void delete_by_priority(int data)
-{
-    int i;
-
-    if ((front==-1) && (rear==-1))
-    {
-        printf("\nQueue is empty no elements to delete");
-        return;
+        printf("Data Not found in tree.\n");
     }
 
-    for (i = 0; i <= rear; i++)
-    {
-        if (data == pri_que[i])
-        {
-            for (; i < rear; i++)
-            {
-                pri_que[i] = pri_que[i + 1];
-            }
-
-        pri_que[i] = -99;
-        rear--;
-
-        if (rear == -1)
-            front = -1;
-        return;
-        }
-    }
-    printf("\n%d not found in queue to delete", data);
-}
-
-/* Function to display queue elements */
-void display_pqueue()
-{
-    if ((front == -1) && (rear == -1))
-    {
-        printf("\nQueue is empty");
-        return;
-    }
-
-    for (; front <= rear; front++)
-    {
-        printf(" %d ", pri_que[front]);
-    }
-
-    front = 0;
+    /* Deleting all nodes of tree */
+    deltree(root);
 }
